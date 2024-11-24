@@ -1,6 +1,5 @@
 #' ---
-#' title: "Otimização da Localização de Pátios de Estocagem na Colheita Florestal "
-#' subtitle: "Abordagem baseada na minimização de custos operacionais"
+#' title: "Otimização da Localização de Pátios de Estocagem na Colheita Florestal"
 #' author: Vinicio Coelho Lima
 #' email: viniciovcl@gmail.com
 #' date: Novembro, 2024
@@ -45,12 +44,12 @@
 #' entre os pontos de demanda (como áreas de corte) e os pontos de suprimento (como pátios).
 #'
 #'
-#' Esse post é um caderno cujo o intuito foi de desenvolver e explorar novas
+#' O código a seguir é um caderno cujo intuito foi desenvolver e explorar novas
 #' habilidades envolvendo a utilização de ferramentas de Geoprocessamento e de
-#' Programação Linear Inteira aplicado ao problema de otimização da localização
+#' Programação Linear Inteira aplicadas ao problema de otimização da localização
 #' de pilhas na colheita florestal. O custo foi calculado a partir da distância
-#' euclidiana, com o trânsito das máquinas sobre os tocos na linha de plantio
-#' não sendo incluído como restrição.
+#' euclidiana, sem incluir o trânsito das máquinas sobre os tocos na linha de
+#' plantio como restrição.
 #'
 #'
 #' A solução foi escrita usando ferramentas de modelagem e solvers de código
@@ -73,7 +72,7 @@
 #' Eucaliptus spp.
 
 
-#+ prj.ferradura, echo=FALSE, warning=FALSE, message= FALSE, fig.cap="Projeto Ferradura", out.width = '70%', fig.align = 'center', fig.pos="H"
+#+ prj.ferradura, echo=FALSE, warning=FALSE, message= FALSE, out.width = '70%', fig.align = 'center', fig.pos="H"
 knitr::include_graphics("../dados/img_prj_ferradura.png")
 
 
@@ -172,7 +171,6 @@ r3 <- rast(ext(prj_t),
            ncol = 39,
            res = 25)
 
-
 per <- raster(rasterize(
   vect(perimetro),
   r3,
@@ -180,7 +178,6 @@ per <- raster(rasterize(
   background = 0,
   touches = TRUE
 ))
-
 
 tbl_per = rasterToPolygons(
   per,
@@ -195,39 +192,7 @@ tbl_per = rasterToPolygons(
 tbl_1 = tbl_per %>% filter(layer == 1)
 st_crs(tbl_1) <- "+proj=utm +zone=23 +south +ellps=aust_SA +units=m +no_defs"
 
-r <- rast(ext(prj_t), res = 10)
-rast <- rasterize(vect(prj_t), r, values=1, background=0)
-r2 = raster(rast)
-crs(r2) <- "+proj=utm +zone=23 +south +ellps=aust_SA +units=m +no_defs"
 
-perimetro <- prj_t %>% st_cast(to = "LINESTRING")
-r3 <- rast(ext(prj_t),
-           nrow = 23,
-           ncol = 39,
-           res = 25)
-
-
-per <- raster(rasterize(
-  vect(perimetro),
-  r3,
-  values = 1,
-  background = 0,
-  touches = TRUE
-))
-
-
-tbl_per = rasterToPolygons(
-  per,
-  fun = NULL,
-  n = 4,
-  na.rm = TRUE,
-  digits = 12,
-  dissolve = FALSE
-) %>% st_as_sf()
-
-# filtra somente bordadura
-tbl_1 = tbl_per %>% filter(layer == 1)
-st_crs(tbl_1) <- "+proj=utm +zone=23 +south +ellps=aust_SA +units=m +no_defs"
 
 
 #' ### Garantindo a distância de 25 m entre pilhas
@@ -321,6 +286,9 @@ pil  = subsample.distance(
 
 
 #+ reduz_sample_2, echo=FALSE, include=TRUE,  eval=TRUE, message=FALSE, warning=FALSE
+
+rownames(x_point) <- as.integer(row.names(x_point))
+x_point$point_name <- as.integer(row.names(x_point))
 
 grids.sample <- c(
   2385,
@@ -592,13 +560,12 @@ P_mod1 <- p +
                  y = Y.y,
                  xend = X.x,
                  yend = Y.x
-               ),
-               lwd = .2) +
+               )) +
 
   geom_point(
     data  = plot_pilhas,
     color = "red",
-    size = 2,
+    size = 3,
     shape = 17
   ) +
 
@@ -607,19 +574,19 @@ P_mod1 <- p +
     aes(
       label = paste0("Capacidade:", costs, " m³", "; Volume ocupado: ", total, " m³")
     ),
-    size = 1.5,
+    size = 2,
     nudge_y = 20
   ) +
 
   labs(title = "Modelo 1",
-       subtitle =  "Não considera nenhuma restrição de custo para ativação de um determinado pátio.
-       \n Todos os pátios serão acionados.")
+       subtitle =  "",
+       caption = "Todos os pátios serão acionados.")
 
 
 ggplot2::ggsave("./plot/P_mod_1.png", P_mod1, width = 8, height = 5.5, device = "png")
 
 #+ saida_plot_mod_1, echo=FALSE, warning=FALSE, message= FALSE, out.width = '110%', fig.align = 'center', fig.pos="H"
-knitr::include_graphics("../plot/P_mod_1b.png")
+knitr::include_graphics("../plot/P_mod_1.png")
 
 
 #' ## Modelo 2 - Custo variável
@@ -660,7 +627,7 @@ cat("Objective:", objective_value(m2), "\n")
 matchs <- get_solution(m2, ship[i, j]) %>%
   filter(value > 0) %>% as.data.frame()
 
-#+ assigment_mod_2, echo=TRUE, include=TRUE,  eval=TRUE, message=FALSE, warning=FALSE
+#+ assigment_mod_2, echo=TRUE, include=TRUE,  eval=FALSE, message=FALSE, warning=FALSE
 
 plot_assignment = matchs %>%
   inner_join(grids, by = c("j" = "id")) %>%
@@ -779,7 +746,7 @@ cat("Objective:",objective_value(m2b),"\n")
 matchs <- get_solution(m2b,ship[i, j]) %>%
   filter(value > 0) %>% as.data.frame()
 
-#+ mod_2b_pre_plot, echo=TRUE, include=TRUE,  eval=TRUE, message=FALSE, warning=FALSE
+#+ mod_2b_pre_plot, echo=TRUE, include=TRUE,  eval=FALSE, message=FALSE, warning=FALSE
 
 plot_assignment = matchs %>%
   inner_join(grids, by = c("j" = "id")) %>%
@@ -880,7 +847,7 @@ m3 <- MIPModel() %>%
   add_constraint(sum_expr(ship[i, j], i = 1:num_depots) == 1, j = 1:num_cust) %>%
   set_objective(
     sum_expr(cost[i, j] * ship[i, j], i = 1:num_depots, j = 1:num_cust) +
-      sum_over(v_cost[i] * y[i], i = 1:num_depots),
+      sum_over(cost[i] * y[i], i = 1:num_depots),
     "min"
   ) %>%
   add_constraint(ship[i, j] <= y[i], i = 1:num_depots, j = 1:num_cust) %>%
@@ -946,12 +913,13 @@ p_m3 <- p +
   ) +
 
   labs(title = "Modelo 3 ",
-       subtitle =  "P = 5")
+       subtitle =  "",
+       caption = "P = 5")
 
 ggsave(filename = "./plot/plot_Mod_3.png",
        plot = p_m3,
-       width = 7.5,
-       height = 10,
+       width = 8,
+       height = 5.5,
        device = "png"
 )
 
@@ -998,7 +966,7 @@ p = prj_t$n_pilhas + 1 # restrição (d) do problema
 
 #' ### Modelo
 
-#+ funcao, include=TRUE, echo=TRUE, eval=TRUE, message=FALSE, warning=FALSE
+#+ funcao, include=TRUE, echo=TRUE, eval=FALSE, message=FALSE, warning=FALSE
 
 # Função
 
