@@ -1,5 +1,6 @@
 #' ---
-#' title: "Otimização da Localização de Pátios de Estocagem na Colheita Florestal"
+#' title: "Otimização da Localização de Pátios de Estocagem"
+#' subtitle: "Uso de ferramentas de Geoprocesamento e Programação Linear Interira aplicadas ao micro planejamento da colheita florestal"
 #' author: Vinicio Coelho Lima
 #' email: viniciovcl@gmail.com
 #' date: Novembro, 2024
@@ -67,7 +68,7 @@
 
 #' A área a ser trabalhada pela equipe de planejamento florestal
 #' encontra-se localizada no projeto Ferradura, sendo selecionado apenas talhões
-#' com idade superiora a 5 anos. O mapa na Figura 1 é uma representação da área
+#' com idade superiora a 3 anos. O mapa na Figura 1 é uma representação da área
 #' em análise, que compreende um total de 90 talhões e 4.561 ha com plantio de
 #' Eucaliptus spp.
 
