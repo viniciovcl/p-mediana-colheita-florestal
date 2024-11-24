@@ -1,6 +1,6 @@
 #' ---
 #' title: "Otimização da Localização de Pátios de Estocagem"
-#' subtitle: "Uso de ferramentas de Geoprocesamento e Programação Linear Interira aplicadas ao micro planejamento da colheita florestal"
+#' subtitle: "Microplanejamneto da Colheita Florestal"
 #' author: Vinicio Coelho Lima
 #' email: viniciovcl@gmail.com
 #' date: Novembro, 2024
