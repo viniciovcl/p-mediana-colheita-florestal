@@ -1,10 +1,8 @@
 ### Otimização da Localização de Pátios de Estocagem na Colheita Florestal
 
-Utilização de ferramentas de Geoprocessamento e de Programação Linear Inteira aplicadas ao problema de
-otimização da localização de pilhas na colheita florestal. 
 
 ```
-Script, mapa e relatório pdf do fluxo de execução.
+Script, mapa e fluxo de execução.
 
 ```
 
