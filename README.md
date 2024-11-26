@@ -3,8 +3,6 @@
 Utilização de ferramentas de Geoprocessamento e de Programação Linear Inteira aplicadas ao problema de
 otimização da localização de pilhas na colheita florestal. 
 
-<https://viniciovcl.github.io/viniciovcl/otimiza%C3%A7%C3%A3o-da-localiza%C3%A7%C3%A3o-de-p%C3%A1tios-de-estocagem/>
-
 ```
 Script, mapa e relatório pdf do fluxo de execução.
 
